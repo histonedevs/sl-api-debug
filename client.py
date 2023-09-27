@@ -3,8 +3,13 @@ import dotenv
 import os
 
 dotenv_file = dotenv.find_dotenv()
-dotenv.load_dotenv(dotenv_file)
 
+def __reload_keys_from_repo():
+    dotenv.load_dotenv(dotenv_file, override=True)
+
+def __save_keys_in_repo(tokens):
+    dotenv.set_key(dotenv_file, 'SL_ACCESS_TOKEN', tokens["access_token"])
+    dotenv.set_key(dotenv_file, 'SL_REFRESH_TOKEN', tokens["refresh_token"])
 
 def get_headers():
     print(f"will use access token: {os.environ['SL_ACCESS_TOKEN']}")
@@ -17,7 +22,7 @@ def get_headers():
 
 def get_refresh_tokens():
     #reload changes if there is an update from some other process
-    dotenv.load_dotenv(dotenv_file)
+    __reload_keys_from_repo()
 
     response = requests.post(
         f"{os.environ['SL_API_ENDPOINT']}/oauth/token",
@@ -32,21 +37,14 @@ def get_refresh_tokens():
     if response.status_code == 200:
         print("Success!")
         tokens = response.json()
-        # Write changes to .env file.
-        dotenv.set_key(dotenv_file,'SL_ACCESS_TOKEN', tokens["access_token"])
-        dotenv.set_key(dotenv_file,'SL_REFRESH_TOKEN', tokens["refresh_token"])
 
-        print(f"new access token: {tokens['access_token']}")
-        # Reload Environment
-        dotenv.load_dotenv(dotenv_file)
-
-        print(f"reloaded access token: {os.environ['SL_ACCESS_TOKEN']}")
+        __save_keys_in_repo(tokens)
     else:
         print(f"There's a {response.status_code} error with your request")
 
 
 def get_sales_data(parameters):
-    dotenv.load_dotenv(dotenv_file)
+    __reload_keys_from_repo()
 
     response = requests.get(
         f"{os.environ['SL_API_ENDPOINT']}/api/sales/per-day-per-product",
@@ -64,7 +62,7 @@ def get_sales_data(parameters):
 
 
 def get_cogs_data(parameters):
-    dotenv.load_dotenv(dotenv_file)
+    __reload_keys_from_repo()
 
     response = requests.get(
         f"{os.environ['SL_API_ENDPOINT']}/api/cogs/cost-periods",
