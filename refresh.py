@@ -1,4 +1,4 @@
 import client
 
 
-client.get_refresh_tokens()
+client.refresh_tokens()

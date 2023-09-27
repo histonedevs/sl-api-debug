@@ -19,5 +19,5 @@ while True:
 
     if status_code == 401:
         print("++++++ Get Token Refresh On Expiry ++++++")
-        client.get_refresh_tokens()
+        client.refresh_tokens()
 

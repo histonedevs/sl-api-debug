@@ -5,7 +5,6 @@ import repo
 
 def get_headers():
     repo.reload_keys_from_repo()
-    print(f"will use access token: {os.environ['SL_ACCESS_TOKEN']}")
 
     return {
         "Accept": "application/json",
@@ -13,7 +12,7 @@ def get_headers():
     }
 
 
-def get_refresh_tokens():
+def refresh_tokens():
     #reload changes if there is an update from some other process
 
     response = requests.post(
@@ -31,8 +30,10 @@ def get_refresh_tokens():
         tokens = response.json()
 
         repo.save_keys_in_repo(tokens)
+        return True
     else:
         print(f"There's a {response.status_code} error with your request")
+        return False
 
 
 def get_sales_data(parameters):
