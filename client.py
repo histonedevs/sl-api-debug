@@ -7,6 +7,8 @@ dotenv.load_dotenv(dotenv_file)
 
 
 def get_headers():
+    print(f"will use access token: {os.environ['SL_ACCESS_TOKEN']}")
+
     return {
         "Accept": "application/json",
         "Authorization": f"Bearer {os.environ['SL_ACCESS_TOKEN']}"
@@ -33,8 +35,12 @@ def get_refresh_tokens():
         # Write changes to .env file.
         dotenv.set_key(dotenv_file,'SL_ACCESS_TOKEN', tokens["access_token"])
         dotenv.set_key(dotenv_file,'SL_REFRESH_TOKEN', tokens["refresh_token"])
+
+        print(f"new access token: {tokens['access_token']}")
         # Reload Environment
         dotenv.load_dotenv(dotenv_file)
+
+        print(f"reloaded access token: {os.environ['SL_ACCESS_TOKEN']}")
     else:
         print(f"There's a {response.status_code} error with your request")
 
